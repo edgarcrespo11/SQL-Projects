@@ -1,5 +1,4 @@
-This project demonstrates foundational SQL Basic skills by performing statistical queries 
-and answering custom questions I developed.
+This "Superstore Analysis" project demonstrates foundational SQL Basic skills by performing statistical queries and answering custom questions I developed.
 
 CREATE TABLE superstore (
     item_id INTEGER PRIMARY KEY,
