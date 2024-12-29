@@ -1,4 +1,4 @@
-This project about the Fortune 500 companies analysis demonstrates Advanced SQL Basic skills by performing queries and answering custom questions I developed.
+This "Fortune 500 Companies Analysis" project demonstrates Advanced SQL Basic skills by performing queries and answering custom questions I developed.
 
 CREATE TABLE fortune_companies (
     company_id INTEGER PRIMARY KEY,
