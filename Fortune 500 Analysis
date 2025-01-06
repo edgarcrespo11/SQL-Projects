@@ -12,22 +12,26 @@ FROM fortune_companies;
 
 
 -- 2. Show the company with the most employees
+
 SELECT company_name, MAX(employees) AS "Most Employees"
 FROM fortune_companies; 
 
 
 -- 3. Show the company with the least employees
+
 SELECT company_name, MIN(employees) AS "Least Employees"
 FROM fortune_companies;
 
 
 -- 4. What is the average of PTO days for Technology
+
 SELECT industry, AVG(paid_time_off_days) AS "average_PTO_days" 
 FROM fortune_companies
 WHERE industry = "Technology";
 
 
 -- 5. Show companies with their revenue and their expectations rating according to their revenue in an ascending order
+
 SELECT company_name, revenue,
 	CASE WHEN revenue >= 350 THEN "Above expectetion"
     WHEN revenue >= 250 THEN "Satisfactory"
@@ -39,7 +43,9 @@ FROM fortune_companies
 ORDER BY revenue asc;
 
 
--- 6. Show companies that offer Healthcare Benefits with its industry. In the same table, show the company's maternity leave weeks and maternity leave rating in an ascending order
+-- 6. Show companies that offer Healthcare Benefits with its industry. In the same table, show the company's maternity leave 
+weeks and maternity leave rating in an ascending order
+
 SELECT company_name, industry, maternity_leave_weeks,
  	CASE WHEN maternity_leave_weeks >= 12 THEN "Great"
     WHEN maternity_leave_weeks >= 8 THEN "Good"
@@ -53,6 +59,7 @@ ORDER BY maternity_leave_weeks asc;
 
 
 -- 7. Show industry and its average paid time off days with average employee tenure of 5 or less years
+
 SELECT industry, AVG(paid_time_off_days) AS average_PTO_days
 FROM fortune_companies
 GROUP BY industry
@@ -60,6 +67,7 @@ HAVING avg_employee_tenure <= 5;
 
 
 -- 8. Show industry and its average paid time off days with average employee tenure of 5 or less years
+
 SELECT industry, AVG(paid_time_off_days) AS average_PTO_days
 FROM fortune_companies
 GROUP BY industry
@@ -67,6 +75,7 @@ HAVING avg_employee_tenure >= 5;
 
 
 -- 9. Show companies and its industry who offer healthcare benefits with at least 15 days of PTO 
+
 SELECT company_name, industry, paid_time_off_days AS "PTO_days"
 FROM fortune_companies
 WHERE healthcare_benefits = 1
@@ -75,6 +84,7 @@ ORDER BY paid_time_off_days asc;
 
 
 -- 10. Show the PTO days of companies and its industry with revenue of at least 450 or at least 200000 employees in ascending order
+
 SELECT company_name, industry, paid_time_off_days AS "PTO_days"
 FROM fortune_companies
 WHERE revenue >= 450
