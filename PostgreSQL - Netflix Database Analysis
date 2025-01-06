@@ -1,10 +1,12 @@
-This "Netflix Database Analysis" project demonstrates my knowledge of PostgreSQL and Relational Queries skills in SQL by performing queries and answering questions.
+This "Netflix Database Analysis" project demonstrates my knowledge of PostgreSQL and Relational Queries skills in SQL 
+by performing queries and answering questions.
 
 This project utilized data from the Netflix database stored at https://www.db-fiddle.com/f/pfsdrKi9cgCDp4Wwb77AF/0
 (you will be able to find the schema at the bottom of this project)
 
 
--- In the next queries, I started analysing with a quick view of what information the database contains as well as analyze what kind of values the tables have in common
+-- In the next queries, I started analysing with a quick view of what information the database contains as well as analyze 
+what kind of values the tables have in common
 
 SELECT * 
 FROM "netflix_titles_info"
