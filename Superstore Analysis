@@ -2,7 +2,7 @@ This "Superstore Analysis" project demonstrates my knowledge of Standard SQL and
 by performing statistical queries and answering custom questions I developed.
 
 This project utilized data from the Fortune 500 database stored at https://www.db-fiddle.com/f/PvBAaQwEUSWAxZCsg4Vmx/243
-(you will be able to find the data at the bottom of this project)
+(you will be able to find the schema at the bottom of this project)
 
 
 -- 1. Show items and prices in a descending order.
