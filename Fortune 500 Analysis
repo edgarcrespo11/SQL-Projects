@@ -2,7 +2,7 @@ This "Fortune 500 Companies Analysis" project demonstrates my knowledge of Stand
 by performing queries and answering custom questions I developed.
 
 This project utilized data from the Fortune 500 database stored at https://www.db-fiddle.com/f/saxdDCCyos6z6UdpjeEXSJ/0
-(you will be able to find the data at the bottom of this project)
+(you will be able to find the schema at the bottom of this project)
 
 
 -- 1. In the next queries, I started analysing with a quick view of what information the database contains.
