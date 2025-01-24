@@ -1,6 +1,6 @@
 This "Customer & Orders Analytics" project demonstrates my knowledge of SQL querying a database with multiple tables 
 in it to quantify statistics and analytics questions about customer and order data. 
-The RDBMS called SQLite Studio was used.
+The RDBMS - SQLite Studio - was used.
 
 -- This first query was done to make sure the data is correct and in order.
 
