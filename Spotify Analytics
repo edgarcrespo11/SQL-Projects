@@ -1,0 +1,127 @@
+This "Spotify" project demonstrates my knowledge of SQL querying a database by performing queries and answering custom questions I developed.
+For this project, Spotify data was downloaded (.csv) from Kaggle. Then a table was created to insert Spotify data into.
+
+-- TABLE CREATION WITH RDBMS - SQLite Studio
+
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+song_key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+song_mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness decimal(8,7) NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL )
+
+-- Spotify Data .csv was inserted into the table. After, the table was explored by performing the following SQL
+
+SELECT *
+FROM BIT_DB.Spotifydata
+;
+
+-- After exploring the table, custom questions were created.
+
+-- What are the top 10 popular songs and artists?
+SELECT artist_name, track_name, popularity
+FROM BIT_DB.Spotifydata
+GROUP BY popularity
+ORDER BY popularity DESC
+LIMIT 10
+;
+
+-- What songs are perfect for different streaming platforms?
+SELECT artist_name, track_name, loudness,
+    CASE 
+        WHEN loudness <= -14.000 THEN 'Spotify'
+        WHEN loudness BETWEEN -11.999 AND -10.000 THEN 'Spotify Loud'
+        WHEN loudness BETWEEN -9.999 AND -6.000 THEN 'Club Play'
+        WHEN loudness >= -5.999 THEN 'CD' 
+        ELSE 'Different Platform'
+    END AS Perfect_for 
+FROM BIT_DB.Spotifydata
+ORDER BY loudness ASC
+;
+
+-- What is the average energy per artist?
+SELECT DISTINCT artist_name, AVG(energy) AS Average_Energy
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY Average_Energy DESC
+;
+
+-- What is the shortest track?
+SELECT artist_name, track_name, duration_ms AS Shortest_track
+FROM BIT_DB.Spotifydata
+ORDER BY Shortest_track ASC
+LIMIT 1
+;
+
+-- What is the longest track?
+SELECT artist_name, track_name, duration_ms AS Longest_track
+FROM BIT_DB.Spotifydata
+ORDER BY Longest_track DESC
+LIMIT 1
+;
+
+-- What is the average duration per artist?
+SELECT DISTINCT artist_name, AVG(duration_ms) AS Average_Duration
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY Average_Duration DESC
+;
+
+-- What are the top 10 tracks that have danceability close to 1.0?
+SELECT DISTINCT artist_name, track_name, danceability
+FROM BIT_DB.Spotifydata
+WHERE danceability BETWEEN 0.7 AND 1.000
+ORDER BY danceability DESC
+LIMIT 10
+;
+
+-- What is the track with the lowest danceability?
+SELECT artist_name, track_name, danceability
+FROM BIT_DB.Spotifydata
+ORDER BY danceability ASC
+LIMIT 1
+;
+
+-- What are the top tracks that with 0.08+ speechiness, 0.5+ valence, and 0.25+ acousticness?
+SELECT DISTINCT artist_name, track_name, AVG(speechiness), AVG(valence), AVG(acousticness)
+FROM BIT_DB.Spotifydata
+WHERE speechiness >= 0.08
+    AND valence >= 0.5
+    AND acousticness >= 0.25
+ORDER BY speechiness DESC, valence DESC, acousticness DESC
+;
+
+
+-- For this last query, it was learned how to do a subquery to be able to filter the results and have the same results as 
+the previous queston.
+
+WITH Averages AS (
+    SELECT 
+        AVG(speechiness) AS Average_speechiness, 
+        AVG(valence) AS Average_valence, 
+        AVG(acousticness) AS Average_acousticness
+    FROM Spotifydata
+    )
+
+SELECT DISTINCT artist_name, track_name, 
+    Averages.Average_speechiness AS speechiness, 
+    Averages.Average_valence AS valence, 
+    Averages.Average_acousticness AS acousticness
+FROM BIT_DB.Spotifydata, Averages
+WHERE speechiness >= Averages.Average_speechiness
+    AND valence >= Averages.Average_valence
+    AND acousticness >= Averages.Average_acousticness
+ORDER BY speechiness DESC, valence DESC, acousticness DESC
