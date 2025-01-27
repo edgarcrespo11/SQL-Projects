@@ -105,8 +105,8 @@ ORDER BY speechiness DESC, valence DESC, acousticness DESC
 ;
 
 
--- For this last query, it was learned how to do a subquery to be able to filter the results and have the same results as 
-the previous queston.
+-- For this last query, it was learned how to do a subquery/Common Table Expression (CTE) to be able to filter the results and 
+have the same results as the previous queston.
 
 WITH Averages AS (
     SELECT 
