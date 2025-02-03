@@ -1,0 +1,260 @@
+This "Final SQL Project" demonstrates my knowledge of SQL querying a database with multiple tables in it to quantify 
+statistics and analytics questions about customers, employees, and music data. 
+The RDBMS - SQLite Studio - was used.
+
+Some of the tables were explored by performing the following SQL
+
+SELECT *
+FROM customers
+;
+
+SELECT *
+FROM employees;
+
+SELECT *
+FROM invoice_items;
+
+SELECT *
+FROM invoices;
+
+SELECT *
+FROM customers;
+
+SELECT *
+FROM tracks;
+
+
+-- After exploring the table, custom questions were created.
+
+-- Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT CustomerId, FirstName, LastName, Country
+FROM customers
+WHERE Country NOT IN ('US', 'USA')
+ORDER BY Country DESC
+;
+
+-- Show only the Customers from Brazil.
+
+SELECT CustomerId, FirstName, LastName, Country
+FROM customers
+WHERE Country IN ('Brazil', 'Brasil')
+;
+
+-- Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, 
+-- Invoice ID, Date of the invoice, and billing country.
+
+SELECT DISTINCT 
+    cus.CustomerId, 
+    cus.FirstName, 
+    cus.LastName, 
+        inv.InvoiceId, 
+        inv.InvoiceDate, 
+        inv.BillingCountry
+FROM customers AS cus
+LEFT JOIN invoices AS inv
+ON cus.CustomerId = inv.CustomerId
+WHERE inv.BillingCountry IN ('Brasil', 'Brazil')
+;
+
+-- Show the Employees who are Sales Agents.
+
+SELECT EmployeeId, FirstName, LastName, Title
+FROM employees
+WHERE (Title LIKE '%Sales%' OR Title LIKE '%Agents%')
+AND Title NOT LIKE '%Manager%'
+;
+
+-- Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT BillingCountry
+FROM invoices
+ORDER BY BillingCountry
+;
+
+-- Provide a query that shows the invoices associated with each sales agent. 
+-- The resulting table should include the Sales Agent's full name.
+
+SELECT DISTINCT
+    em.FirstName || ' ' || em.LastName AS Sales_Agent, inv.InvoiceId
+FROM employees AS em
+    LEFT JOIN customers AS cu 
+        ON em.EmployeeId = cu.SupportRepId
+    LEFT JOIN invoices AS inv
+        ON inv.CustomerId = cu.CustomerId
+ORDER BY Sales_Agent ASC
+;
+
+-- Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT DISTINCT 
+    cu.FirstName || ' ' || cu.LastName AS Customer,
+    cu.Country,
+    inv.Total AS Invoice_Total,
+    em.FirstName || ' ' || em.LastName AS Sales_Agent
+FROM customers AS cu
+    LEFT JOIN invoices AS inv
+        ON inv.CustomerId = cu.CustomerId
+    LEFT JOIN employees AS em 
+        ON em.EmployeeId = cu.SupportRepId
+ORDER BY Sales_Agent ASC
+;
+
+-- How many Invoices were there in 2009?
+
+SELECT COUNT(InvoiceDate) AS Invoice_in_2009
+FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+;
+
+-- What are the total sales for 2009?
+
+SELECT ROUND(SUM(Total), 2) AS Total_Sales_in_2009 
+FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+;
+
+-- Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT 
+    invi.InvoiceLineId,
+    tr.Name AS Purchased_Track
+FROM invoice_items as invi
+    LEFT JOIN tracks AS tr
+        ON invi.TrackId = tr.TrackId
+ORDER BY invi.InvoiceLineId
+;
+
+-- Write a query that includes the purchased track name and artist name with each invoice line ID.
+
+SELECT DISTINCT
+    invi.InvoiceLineId,
+    art.Name AS Artist_Name,
+    tr.Name AS Purchased_Track
+FROM invoice_items as invi
+    LEFT JOIN tracks AS tr
+        ON invi.TrackId = tr.TrackId
+    LEFT JOIN albums AS al
+        ON al.AlbumId = tr.AlbumId
+    LEFT JOIN artists AS art
+        ON art.ArtistId = al.ArtistId 
+ORDER BY invi.InvoiceLineId
+;
+
+-- Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT DISTINCT
+    al.Title AS Album_Name,
+    tr.Name AS Track_Name,
+    ge.Name AS Genre_Name,
+    mt.Name AS Media_Type
+FROM tracks AS tr
+    LEFT JOIN albums AS al
+        ON tr.AlbumId = al.AlbumId
+    LEFT JOIN genres AS ge
+        ON tr.GenreId = ge.GenreId
+    LEFT JOIN media_types AS mt
+        ON tr.MediaTypeId = mt.MediaTypeId
+ORDER BY Genre_Name, Track_Name
+;
+
+-- Show the total sales made by each sales agent.
+
+SELECT 
+    em.FirstName || ' ' || em.LastName AS Sales_Agent,
+    ROUND(SUM(inv.Total),2) AS Total_Sales
+FROM employees AS em
+    LEFT JOIN customers AS cu 
+        ON em.EmployeeId = cu.SupportRepId
+    LEFT JOIN invoices AS inv
+        ON inv.CustomerId = cu.CustomerId
+WHERE (em.Title LIKE '%Sales%' OR em.Title LIKE '%Agent%')
+AND em.Title NOT LIKE '%Manager%' 
+GROUP BY Sales_Agent
+;
+
+-- Which sales agent made the most dollars in sales in 2009?
+
+SELECT 
+    em.FirstName || ' ' || em.LastName AS Sales_Agent,
+    ROUND(SUM(inv.Total),2) AS Most_Sales_in_2009
+FROM employees AS em
+    LEFT JOIN customers AS cu 
+        ON em.EmployeeId = cu.SupportRepId
+    LEFT JOIN invoices AS inv
+        ON inv.CustomerId = cu.CustomerId
+WHERE (em.Title LIKE '%Sales%' OR em.Title LIKE '%Agent%')
+AND em.Title NOT LIKE '%Manager%'
+AND inv.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+GROUP BY Sales_Agent
+ORDER BY Most_Sales_in_2009 DESC
+LIMIT 1
+;
+
+-- Which genre had the highest sales in 2009 and how much?
+
+SELECT
+    ge.Name as Genre_Most_Sales_2009,
+    ROUND(SUM(inv.Total),2) AS Most_Sales_in_2009
+FROM genres as ge
+    LEFT JOIN tracks AS tr
+        ON tr.GenreId = ge.GenreId
+    LEFT JOIN invoice_items AS init
+        ON init.TrackId = tr.TrackId
+    LEFT JOIN invoices AS inv
+        ON inv.InvoiceId = init.InvoiceId
+WHERE inv.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+GROUP BY ge.Name
+ORDER BY Most_Sales_in_2009 DESC
+LIMIT 1
+;
+
+-- Which track had the highest sales in 2011 and how much?
+
+SELECT DISTINCT
+    art.Name as Artist_Name,
+    tr.Name as Track_Most_Sales_2011,
+    ROUND(SUM(inv.Total),2) AS Most_Sales_in_2011
+FROM tracks as tr
+    LEFT JOIN invoice_items AS init
+        ON init.TrackId = tr.TrackId
+    LEFT JOIN albums AS al
+        ON al.AlbumId = tr.AlbumId
+    LEFT JOIN artists AS art
+        ON art.ArtistId = al.ArtistId
+    LEFT JOIN invoices AS inv
+        ON inv.InvoiceId = init.InvoiceId
+WHERE inv.InvoiceDate BETWEEN '2011-01-01' AND '2011-12-31'
+GROUP BY tr.Name
+ORDER BY Most_Sales_in_2011 DESC
+LIMIT 1
+;
+
+-- Debbuged so it correctly calculates sales per track --
+
+WITH TotalSales AS (
+    SELECT ROUND(SUM(inv.Total), 2) AS Total_Sales_2011
+    FROM invoices AS inv
+    WHERE inv.InvoiceDate BETWEEN '2011-01-01' AND '2011-12-31'
+)
+
+SELECT 
+    art.Name AS Artist_Name,
+    tr.Name AS Track_Most_Sales_2011,
+    ROUND(SUM(init.UnitPrice * init.Quantity), 2) AS Track_Sales_2011,
+    ts.Total_Sales_2011
+FROM tracks AS tr
+LEFT JOIN invoice_items AS init 
+    ON init.TrackId = tr.TrackId
+LEFT JOIN albums AS al 
+    ON al.AlbumId = tr.AlbumId
+LEFT JOIN artists AS art 
+    ON art.ArtistId = al.ArtistId
+LEFT JOIN invoices AS inv 
+    ON inv.InvoiceId = init.InvoiceId
+JOIN TotalSales AS ts
+WHERE inv.InvoiceDate BETWEEN '2011-01-01' AND '2011-12-31'
+GROUP BY tr.Name, art.Name, ts.Total_Sales_2011
+ORDER BY Track_Sales_2011 DESC
+LIMIT 1;
+
